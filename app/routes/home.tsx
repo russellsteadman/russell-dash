@@ -1,17 +1,18 @@
+import verifyToken from "~/shared/auth";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
+  return [{ title: "Dash | Russell" }, { name: "robots", content: "noindex" }];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
-  return { message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE };
+export async function loader(args: Route.LoaderArgs) {
+  const auth = await verifyToken(args);
+
+  if (!auth) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  return <div>Test</div>;
 }
