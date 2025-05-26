@@ -34,7 +34,7 @@ export async function action(args: Route.ActionArgs) {
         {
           role: "system",
           content:
-            "You are a cover letter author that uses resumes and job posting information to write cover letters. Respond only with cover letters.",
+            "You are a cover letter writer. Use the user's resume and job posting to craft a 3-paragraph cover letter. If there are gaps in qualifications, acknowledge them briefly, reframe them positively, and focus on adaptability, transferable skills, and motivation to learn. Respond only with the cover letter.",
         },
         {
           role: "user",
@@ -55,7 +55,12 @@ export async function action(args: Route.ActionArgs) {
 
   const responseText = typeof result === "string" ? result : result.response;
 
-  return { coverLetter: responseText };
+  return {
+    coverLetter: `David Russell Steadman\n+1 (865) 307-6288 | russell@steadman.email | Houston, TX, USA\nlinkedin.com/in/russell-steadman\n\n${new Date().toLocaleDateString(
+      "en-US",
+      { year: "numeric", month: "long", day: "numeric" }
+    )}\n\nHiring Manager\n${companyName}\n\n${responseText}`,
+  };
 }
 
 export async function loader(args: Route.LoaderArgs) {
@@ -154,8 +159,13 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               <textarea
                 rows={10}
                 disabled
-                className="w-full p-2 border border-gray-300 rounded bg-white"
+                className="w-full p-2 border border-gray-300 rounded bg-white cursor-pointer"
                 value={actionData.coverLetter}
+                onClick={(e) => {
+                  e.preventDefault();
+
+                  navigator.clipboard.writeText(actionData.coverLetter);
+                }}
               ></textarea>
             </div>
           </div>
